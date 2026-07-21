@@ -18,7 +18,7 @@ jobs:
         sudo mv deck /usr/local/bin/
 
     - name: Validate Kong configuration
-      run: deck validate kong.yaml
+      run: deck file validate kong.yaml
 
     - name: Validate connectivity to Konnect
       env:

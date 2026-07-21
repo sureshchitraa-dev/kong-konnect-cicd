@@ -14,8 +14,9 @@ jobs:
 
     - name: Install decK
       run: |
-        curl -sL https://github.com/kong/deck/releases/download/v1.35.0/deck_1.35.0_linux_amd64.tar.gz | tar xz
+        curl -sL https://github.com/kong/deck/releases/latest/download/deck_linux_amd64.tar.gz | tar xz
         sudo mv deck /usr/local/bin/
+
 
     - name: Validate Kong configuration
       run: deck file validate kong.yaml

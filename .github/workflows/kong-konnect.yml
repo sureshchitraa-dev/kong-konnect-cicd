@@ -24,7 +24,7 @@ jobs:
       env:
         KONNECT_PAT: ${{ secrets.KONNECT_PAT }}
       run: |
-        deck gateway ping --konnect-control-plane-name Docker-CP --konnect-token kpat_L17W3kxxCEMDtjicfeeXTSfxf6ekIZkgpffDWFr3nQCgi2oPR --konnect-addr https://in.api.konghq.com
+        deck gateway ping --konnect-control-plane-name Docker-CP --konnect-token kpat_L17W3kxxCEMDtjicfeeXTSfxf6ekIZkgpffDWFr3nQCgi2oPR --konnect-addr https://in.api.konghq.com --vv
     - name: Apply configuration to Konnect
       env:
         KONNECT_PAT: ${{ secrets.KONNECT_PAT }}

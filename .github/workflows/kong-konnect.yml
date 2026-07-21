@@ -1,0 +1,46 @@
+name: Kong Konnect CI/CD
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  kong-konnect:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install decK
+      run: |
+        curl -sL https://github.com/kong/deck/releases/download/v1.35.0/deck_1.35.0_linux_amd64.tar.gz | tar xz
+        sudo mv deck /usr/local/bin/
+
+    - name: Validate Kong configuration
+      run: deck validate kong.yaml
+
+    - name: Validate connectivity to Konnect
+      env:
+        KONNECT_PAT: ${{ secrets.KONNECT_PAT }}
+      run: |
+        deck gateway ping \
+          --konnect-control-plane-name "Docker-CP" \
+          --konnect-token $KONNECT_PAT \
+          --konnect-addr https://in.api.konghq.com
+
+    - name: Apply configuration to Konnect
+      env:
+        KONNECT_PAT: ${{ secrets.KONNECT_PAT }}
+      run: |
+        deck sync \
+          --konnect-control-plane-name "Docker-CP" \
+          --konnect-token $KONNECT_PAT \
+          --konnect-addr https://in.api.konghq.com \
+          -s kong.yaml
+
+    - name: Sleep for a couple of seconds
+      run: sleep 5
+
+    - name: Test Data Plane route
+      run: curl -i http://localhost:8000/test/get || true

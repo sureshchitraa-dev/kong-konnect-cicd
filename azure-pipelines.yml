@@ -1,0 +1,48 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  KONNECT_ADDR: https://in.api.konghq.com
+  KONNECT_CP_NAME: Docker-CP
+  KONNECT_PAT: $(KONNECT_PAT)
+
+steps:
+- checkout: self
+
+- script: |
+    curl -sL https://github.com/kong/deck/releases/download/v1.35.0/deck_1.35.0_linux_amd64.tar.gz | tar xz
+    sudo mv deck /usr/local/bin/
+  displayName: Install decK
+
+- script: deck validate kong.yaml
+  displayName: Validate Kong configuration
+
+- script: |
+    deck gateway ping \
+      --konnect-control-plane-name "$KONNECT_CP_NAME" \
+      --konnect-token "$KONNECT_PAT" \
+      --konnect-addr "$KONNECT_ADDR"
+  displayName: Validate connectivity to Konnect
+  env:
+    KONNECT_PAT: $(KONNECT_PAT)
+
+- script: |
+    deck sync \
+      --konnect-control-plane-name "$KONNECT_CP_NAME" \
+      --konnect-token "$KONNECT_PAT" \
+      --konnect-addr "$KONNECT_ADDR" \
+      -s kong.yaml
+  displayName: Apply configuration to Konnect
+  env:
+    KONNECT_PAT: $(KONNECT_PAT)
+
+- script: sleep 5
+  displayName: Sleep for a couple of seconds
+
+- script: curl -i http://localhost:8000/test/get || true
+  displayName: Test Data Plane route

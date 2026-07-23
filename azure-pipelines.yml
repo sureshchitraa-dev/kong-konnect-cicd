@@ -23,13 +23,13 @@ steps:
   displayName: Validate Kong configuration
 
 - script: |
+  env:
+    KONNECT_PAT: ${{ secrets.KONNECT_PAT }}
     deck gateway ping \
       --konnect-control-plane-name "$KONNECT_CP_NAME" \
       --konnect-token "$KONNECT_PAT" \
       --konnect-addr "$KONNECT_ADDR"
   displayName: Validate connectivity to Konnect
-  env:
-    KONNECT_PAT: $(KONNECT_PAT)
 
 - script: |
     deck sync \

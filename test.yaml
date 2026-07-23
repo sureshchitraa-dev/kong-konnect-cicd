@@ -1,0 +1,17 @@
+jobs:
+  ping-konnect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Ping Konnect
+        env:
+          KONNECT_CP_NAME: ${{ secrets.KONNECT_CP_NAME }}
+          KONNECT_PAT: ${{ secrets.KONNECT_PAT }}
+          KONNECT_ADDR: ${{ secrets.KONNECT_ADDR }}
+        run: |
+          deck gateway ping \
+            --konnect-control-plane-name "$KONNECT_CP_NAME" \
+            --konnect-token "$KONNECT_PAT" \
+            --konnect-addr "$KONNECT_ADDR"

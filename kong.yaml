@@ -5,4 +5,4 @@ services:
   routes:
   - name: test-route
     paths:
-    - /test
+    - /test1

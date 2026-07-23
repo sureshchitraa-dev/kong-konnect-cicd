@@ -14,21 +14,18 @@ jobs:
 
     - name: Install decK
       run: |
-        curl -sL https://github.com/kong/deck/releases/download/v1.35.0/deck_1.35.0_linux_amd64.tar.gz | tar xz
+        curl -sL https://github.com/kong/deck/releases/download/v1.35.0/deck_1.35.0_linux_amd64.tar.gz -o deck.tar.gz
+        tar -xzf deck.tar.gz
         sudo mv deck /usr/local/bin/
 
     - name: Validate Kong configuration
-      run: deck validate kong.yaml
+      run: deck file validate kong.yaml
 
     - name: Validate connectivity to Konnect
       env:
         KONNECT_PAT: ${{ secrets.KONNECT_PAT }}
       run: |
-        deck gateway ping \
-          --konnect-control-plane-name "Docker-CP" \
-          --konnect-token $KONNECT_PAT \
-          --konnect-addr https://in.api.konghq.com
-
+        deck gateway ping --konnect-control-plane-name Docker-CP --konnect-token kpat_L17W3kxxCEMDtjicfeeXTSfxf6ekIZkgpffDWFr3nQCgi2oPR --konnect-addr https://in.api.konghq.com
     - name: Apply configuration to Konnect
       env:
         KONNECT_PAT: ${{ secrets.KONNECT_PAT }}
